@@ -28,7 +28,7 @@
 - **ngrok 설치**: 서버에 ngrok을 설치하고, 계정이 없다면 계정을 생성합니다.  
   **Ngrok Installation**: Install ngrok on your server and create an account if you haven't done so already.
 - **ngrok에 로그인**: ngrok을 인증합니다. 자세한 내용은 ngrok 사이트를 참조하십시오.  
-  **Sign In to ngrok**: Authenticate ngrok with your account to allow secure tunneling. 
+  **Sign In to ngrok**: Authenticate ngrok with your account to allow secure tunneling.
 
 ### 7단계: 서버와 ngrok 실행 / Step 7: Run Your Server and ngrok
 - **서버 시작**: 서버 터미널에서 `node server.js` 명령어를 실행하여 Node.js 서버를 시작합니다.  
@@ -40,4 +40,6 @@
 - **테스트**: Roblox 게임을 실행하고 CAPTCHA 시스템이 제대로 작동하는지 확인합니다. 플레이어의 CAPTCHA 응답에 따라 올바르게 텔레포트되는지 테스트합니다.  
   **Testing**: Launch your Roblox games and ensure that the CAPTCHA system is functioning as intended. Test the verification process to ensure players are correctly teleported based on their CAPTCHA response.
 
-
+### GUI 요소 생성 및 테스트 / Create and Test GUI Elements
+- **스크립트에 맞게 GUI를 생성하고, 테스트하여 모든 요소가 올바르게 작동하는지 확인하세요.**  
+  **Create GUI elements according to the script and test to ensure that all components are functioning correctly.**
