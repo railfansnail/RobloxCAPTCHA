@@ -1,0 +1,92 @@
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const fs = require('fs'); // 파일 시스템 모듈
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// CORS 설정
+app.use(cors());
+app.use(bodyParser.json());
+
+const AUTHORIZED_USERS_FILE = 'authorizedUsers.txt'; // 저장할 파일 이름
+
+// 인증 요청 처리
+app.post('/auth', (req, res) => {
+    const { userId } = req.body; // 클라이언트에서 보낸 사용자 ID
+    console.log(`인증 요청 받음: 사용자 ID ${userId}`);
+
+    // 사용자 인증 상태를 텍스트 파일에 저장
+    fs.readFile(AUTHORIZED_USERS_FILE, 'utf8', (err, data) => {
+        let authorizedUsers = {};
+
+        if (!err && data) {
+            // 기존 사용자 데이터가 있는 경우 파싱
+            authorizedUsers = JSON.parse(data);
+        }
+
+        // 인증된 사용자 추가
+        authorizedUsers[userId] = { authorized: true };
+        console.log(`사용자 ${userId} 인증됨: ${JSON.stringify(authorizedUsers[userId])}`);
+
+        // 파일에 저장
+        fs.writeFile(AUTHORIZED_USERS_FILE, JSON.stringify(authorizedUsers, null, 2), (err) => {
+            if (err) {
+                console.error("파일 저장 실패:", err);
+                return res.status(500).json({ success: false, message: '파일 저장 실패' });
+            }
+            // 성공 응답 반환
+            res.json({ success: true });
+        });
+    });
+});
+
+// 인증된 사용자 목록 가져오기
+app.get('/getAuthorizedUsers', (req, res) => {
+    fs.readFile(AUTHORIZED_USERS_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error("파일 읽기 실패:", err);
+            return res.status(500).json({ success: false, message: '파일 읽기 실패' });
+        }
+
+        let authorizedUsers = {};
+
+        if (data) {
+            authorizedUsers = JSON.parse(data); // JSON 문자열을 객체로 변환
+        }
+
+        console.log("인증된 사용자 목록 반환:", authorizedUsers); // 인증된 사용자 목록 로그 출력
+
+        // 인증된 사용자 반환
+        res.json({ success: true, authorizedUsers: authorizedUsers });
+    });
+});
+
+// 인증된 사용자를 찾을 때 로그 출력
+app.get('/findUser/:userId', (req, res) => {
+    const userId = req.params.userId;
+    console.log(`사용자 ${userId} 찾기 요청`);
+
+    fs.readFile(AUTHORIZED_USERS_FILE, 'utf8', (err, data) => {
+        if (err) {
+            console.error("파일 읽기 실패:", err);
+            return res.status(500).json({ success: false, message: '파일 읽기 실패' });
+        }
+
+        let authorizedUsers = {};
+        if (data) {
+            authorizedUsers = JSON.parse(data); // JSON 문자열을 객체로 변환
+        }
+
+        const isAuthorized = authorizedUsers[userId] ? true : false;
+        console.log(`사용자 ${userId} 인증 여부: ${isAuthorized}`);
+
+        res.json({ success: true, authorized: isAuthorized });
+    });
+});
+
+// 서버 시작
+app.listen(PORT, () => {
+    console.log(`서버가 ${PORT} 포트에서 실행 중입니다.`);
+});
